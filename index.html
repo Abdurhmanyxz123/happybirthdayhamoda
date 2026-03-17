@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultimate Birthday 🎉</title>
+
+<style>
+body {
+  margin:0;
+  overflow:hidden;
+  font-family:sans-serif;
+  text-align:center;
+  background:linear-gradient(135deg,#89f7fe,#66a6ff);
+}
+
+/* TEXT */
+h1 {
+  font-size:60px;
+  margin-top:30px;
+  animation:pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.2)}
+}
+
+/* TEDDY SVG */
+.teddy {
+  width:150px;
+  margin:auto;
+  animation:float 2s infinite;
+}
+@keyframes float {
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-20px)}
+}
+
+/* BUTTONS */
+button {
+  padding:12px 30px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.yes { background:#00c853; color:#fff; }
+.no  { background:#d50000; color:#fff; position:absolute; }
+
+/* PAGE 2 */
+#page2 { display:none; background:#1a1a2e; color:white; height:100vh; }
+
+/* CAKE */
+.cake {
+  width:200px;
+  height:120px;
+  background:#ff80ab;
+  margin:60px auto;
+  border-radius:20px;
+  position:relative;
+}
+
+/* CANDLES */
+.candle {
+  width:12px;
+  height:40px;
+  background:#ffd54f;
+  position:absolute;
+  top:-40px;
+}
+
+/* FLAME */
+.flame {
+  width:10px;
+  height:15px;
+  background:orange;
+  border-radius:50%;
+  position:absolute;
+  top:-15px;
+  animation:flicker .2s infinite;
+}
+@keyframes flicker {
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.4)}
+}
+
+/* HEARTS */
+.heart {
+  position:absolute;
+  color:red;
+  animation:fly 4s linear infinite;
+}
+@keyframes fly {
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-100vh);}
+}
+</style>
+</head>
+
+<body>
+
+<div id="page1">
+<h1>🎉 Happy Birthday 🎉</h1>
+
+<!-- TEDDY SVG -->
+<svg class="teddy" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="50" fill="#8d6e63"/>
+  <circle cx="70" cy="60" r="20" fill="#8d6e63"/>
+  <circle cx="130" cy="60" r="20" fill="#8d6e63"/>
+  <circle cx="85" cy="100" r="5"/>
+  <circle cx="115" cy="100" r="5"/>
+  <circle cx="100" cy="115" r="8" fill="#5d4037"/>
+</svg>
+
+<h2>Do you love me? 😏</h2>
+
+<button class="yes" onclick="goNext()">Yes</button>
+<button id="noBtn" class="no">No</button>
+</div>
+
+<div id="page2">
+<h1>🎂 Happy Birthday 🎂</h1>
+<div class="cake" id="cake"></div>
+<canvas id="fireworks"></canvas>
+</div>
+
+<audio id="music" autoplay loop>
+<source src="freesound_community-happy-15th-birthday-freesound-65381.mp3">
+</audio>
+
+<audio id="clickSound">
+<source src="freesound_community-happy-15th-birthday-freesound-65381.mp3">
+</audio>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+
+/* SMART ESCAPE BUTTON 😈 */
+function moveButton(e){
+  let x = Math.random() * (window.innerWidth - 100);
+  let y = Math.random() * (window.innerHeight - 50);
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+noBtn.addEventListener("mouseover", moveButton);
+noBtn.addEventListener("click", moveButton);
+
+/* GO TO PAGE 2 */
+function goNext(){
+  document.getElementById("clickSound").play();
+  document.getElementById("page1").style.display="none";
+  document.getElementById("page2").style.display="block";
+  createCake();
+  hearts();
+  fireworks();
+}
+
+/* CAKE + CANDLES */
+function createCake(){
+  const cake = document.getElementById("cake");
+  for(let i=0;i<6;i++){
+    let c = document.createElement("div");
+    c.className="candle";
+    c.style.left=(20+i*30)+"px";
+
+    let f=document.createElement("div");
+    f.className="flame";
+
+    c.appendChild(f);
+    cake.appendChild(c);
+  }
+}
+
+/* HEARTS */
+function hearts(){
+  setInterval(()=>{
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="❤️";
+    h.style.left=Math.random()*window.innerWidth+"px";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  },300);
+}
+
+/* FIREWORKS 🎆 */
+function fireworks(){
+  const canvas=document.getElementById("fireworks");
+  const ctx=canvas.getContext("2d");
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+
+  function burst(){
+    let x=Math.random()*canvas.width;
+    let y=Math.random()*canvas.height/2;
+
+    for(let i=0;i<50;i++){
+      let angle=Math.random()*2*Math.PI;
+      let speed=Math.random()*5;
+      let dx=Math.cos(angle)*speed;
+      let dy=Math.sin(angle)*speed;
+
+      let life=30;
+
+      function animate(){
+        if(life<=0) return;
+        ctx.fillStyle="white";
+        ctx.fillRect(x,y,2,2);
+        x+=dx;
+        y+=dy;
+        life--;
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+  }
+
+  setInterval(()=>{
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    burst();
+  },500);
+}
+</script>
+
+</body>
+</html>
+
